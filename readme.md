@@ -1,4 +1,4 @@
-# Darwin Core biodiversity data from Akvaplan-niva, co-funded by GBIF Norway
+# Darwin Core biodiversity data pipelines
 
 This repository contains data production pipelines for building [Darwin Core](https://www.tdwg.org/standards/dwc/) datasets for publication in the [Global Biodiversity Information Facility](https://www.gbif.org/), with permanent archiving in [Zenodo](https://sandbox.zenodo.org/communities/akvaplan-raw)
 
@@ -17,7 +17,7 @@ This repository contains data production pipelines for building [Darwin Core](ht
 - Export [EcoTaxa](https://ecotaxa.obs-vlfr.fr/) data as TSV (using DOI export with images)
 - Publish untreated TSV and images to Zenodo
 
-- Create Darwin Core occurrences in NDJSON from EcoTaxa TSV, using [\_](https://github.com/akvaplan-niva)
+- Create Darwin Core occurrences in NDJSON from EcoTaxa TSV, using [ecotaxa-darwin-core](https://github.com/akvaplan-niva/ecotaxa-darwin-core)
 - Create unique Darwin Core sampling events in NDJSON by reducing the occurrences
 - @todo Merge with other/authoritative event metadata (eg. sampling volumes)
 - Create lists of ignored (not-living) and rejected (non-Eukaryota) objects
@@ -102,7 +102,7 @@ Finished EcoTaxa pipeline [2021-03-23T20:15+00:00]
 - Extract time coverage (start/end, years, months, days, dates)
 - Extract space coverage (bounding box/depths)
 - Extract sampling protocols
-- Create EML XML
+- @todo Create EML XML
 
 #### Archive
 
