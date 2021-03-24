@@ -1,0 +1,51 @@
+#!/bin/bash
+if [[ ! -f $DWC_EVENTS_NDJSON ]]
+then
+  echo "Darwin Core event file \"$DWC_EVENTS_NDJSON\" does not exist"
+  exit 1
+fi
+
+echo "Extracting Darwin Core event metadata in $DWC_NDJSON"
+
+# Gographic coverage (bbox and depths)
+cat $DWC_EVENTS_NDJSON | grep -v '9999.0' \
+  | nd-map '[+d.decimalLongitude,+d.decimalLatitude,+d.minimumDepthInMeters*-1,+d.maximumDepthInMeters*-1]' \
+  | nd-facets \
+  | nd-map 'lon=d[0], lat=d[1], zmin=Math.min(d[2].min,d[3].min), zmax=Math.max(d[2].max,d[3].max),
+    w=lon.min, s=lat.min, e=lon.max, n=lat.max,
+    [w,s,zmin,e,n,zmax]' \
+  > $DWC_NDJSON/bbox.json
+
+cat $DWC_EVENTS_NDJSON | nd-count --select minimumDepthInMeters,maximumDepthInMeters > $DWC_NDJSON/depths.ndjson
+
+# Sampling protocols
+cat $DWC_EVENTS_NDJSON  | nd-uniq --select samplingProtocol > $DWC_NDJSON/sampling-protocols.ndjson
+
+# Time coverage
+cat $DWC_EVENTS_NDJSON | nd-map --select eventDate | nd-facets | nd-map '{min,max} = d.eventDate, [min,max]' \
+  > $DWC_NDJSON/time-coverage.json
+
+cat $DWC_EVENTS_NDJSON | nd-filter 'd.eventDate && d.eventDate.length>0' \
+  | nd-map 'date = d.eventDate.split("T")[0], dt = new Date(d.eventDate),
+    year=dt.getUTCFullYear(), month=dt.getUTCMonth()+1, day=dt.getUTCDate(),
+    { year, month, day, date }' \
+  | nd-uniq \
+  | nd-sort --on date \
+  > $DWC_NDJSON/time-dates.json
+
+  echo $readme > $DWC_NDJSON/readme.nd
+
+      # Dataset
+      # cat $DWC_NDJSON/time-coverage.json | nd-map '[min, max ] = d,
+      #   datasetID = Deno.env.get("DATASET_ID"),
+      #   ecotaxaURL = Deno.env.get("ECOTAXA_URL"),
+      #   datasetName =  Deno.env.get("C"),
+      #   rightsHolder = "Akvaplan-niva",
+      #   institutionID = "https://akvaplan.niva.no",
+      #   license = "https://creativecommons.org/licenses/by/4.0/",
+      #   references = ecotaxaURL,
+      #   { eventID: datasetID, eventDate: `${min}/${max}`, datasetName, datasetID, institutionID, license, rightsHolder, references }' \
+      #   > $DWC_NDJSON/dwc-dataset.json
+
+      # Add a "parent" event?
+      # cat $DWC_NDJSON/dwc-dataset.json >> $DWC_EVENTS_NDJSON

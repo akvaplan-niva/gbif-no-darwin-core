@@ -1,0 +1,48 @@
+#!/bin/bash
+# Check that occurrence objects are unique
+# cat $ECOTAXA_TSV | nd-csv | nd-map --select object_id | nd-count -d # should yield nothing
+
+if [[ ! -f $ECOTAXA_TSV ]]
+then
+  echo "Downloading EcoTaxa TSV from $ECOTAXA_TSV_URL"
+  mkdir -p `dirname $ECOTAXA_TSV`
+  curl $ECOTAXA_TSV_URL > $ECOTAXA_TSV
+fi
+
+# Occurrences
+echo "Creating Darwin Core occurrences NDJSON from $ECOTAXA_URL TSV in $DWC_NDJSON"
+mkdir -p $DWC_NDJSON
+cat "$ECOTAXA_TSV" \
+  | nd-csv -s \
+  | grep -v "not-living>" \
+  | grep "Eukaryota" \
+  | nd-map 'd.sample_id = d.sample_id.replace(/_(narrow|large)$/, ""), d' \
+  | ecotaxa-occurrences --country NO --project "$ECOTAXA_PROJECT" --dataset-id "$DATASET_ID" --dataset-name "$DATASET_NAME" \
+  | nd-map 'd.canonicalName = d.scientificName,d' \
+  > $DWC_OCCURRENCES_NDJSON 2> $DWC_NDJSON/error.log > $DWC_OCCURRENCES_NDJSON
+
+# Events
+echo "Creating Darwin Core events NDJSON from $ECOTAXA_URL TSV in $DWC_NDJSON"
+EVENT_FIELDS="eventDate,samplingProtocol,fieldNumber,locality,sampleSizeValue,sampleSizeUnit,decimalLongitude,decimalLatitude,maximumDepthInMeters,minimumDepthInMeters,eventRemarks,datasetID,eventID,parentEventID"
+
+cat $DWC_OCCURRENCES_NDJSON \
+  | nd-count --key occurrences --select "$EVENT_FIELDS" \
+  | nd-group d.eventID | nd-map d[1][0] \
+  > $DWC_EVENTS_NDJSON
+
+cat $DWC_OCCURRENCES_NDJSON \
+  | nd-count --select $EVENT_FIELDS \
+  | nd-group d.eventID | nd-filter 'd[1].length!==1' \
+  > $DWC_NDJSON/warn-event-metadata-inconsistent.ndjson
+
+# Ignored and rejected
+head -n1 $ECOTAXA_TSV > $DWC_NDJSON/ignored.tsv
+cat $ECOTAXA_TSV | grep "not-living>" >> $DWC_NDJSON/ignored.tsv
+
+head -n1 $ECOTAXA_TSV > $DWC_NDJSON/rejected.tsv
+cat $ECOTAXA_TSV | grep -v object_id | grep -v Eukaryota | grep -v not-living >> $DWC_NDJSON/rejected.tsv
+
+cat $DWC_NDJSON/ignored.tsv | nd-csv | nd-count --select object_annotation_hierarchy > $DWC_NDJSON/ignored-objects.ndjson
+cat $DWC_NDJSON/rejected.tsv | nd-csv | nd-count --select object_annotation_hierarchy > $DWC_NDJSON/rejected-objects.ndjson
+
+rm  $DWC_NDJSON/ignored.tsv $DWC_NDJSON/rejected.tsv

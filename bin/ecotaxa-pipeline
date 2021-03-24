@@ -1,0 +1,24 @@
+#!/bin/bash
+CONFIG="./config/env-ecotaxa-project-$1"
+if [[ -f $CONFIG ]]
+then
+  source "$CONFIG"
+  source "./config/env-ecotaxa"
+else
+  echo "Config file $CONFIG not found, run with $0 [EcoTaxa project number]"
+  exit 1
+fi
+echo "Starting EcoTaxa pipeline [`date -u --iso-8601=minutes`]"
+deno run --allow-env ./bin/ecotaxa-readme.js 0
+./bin/ecotaxa-to-dwc "$@"
+./bin/dwc-metadata "$@"
+./bin/dwc-taxonomy "$@"
+./bin/dwc-archive "$@"
+#deno run --allow-env ./bin/ecotaxa-readme.js 1
+
+echo -e "\nLine counts"
+wc -l $ECOTAXA_TSV
+wc -l $DWC_NDJSON/*.ndjson
+wc -l $DWCA/*.tsv
+
+echo -e "\nFinished EcoTaxa pipeline [`date -u --iso-8601=minutes`]"

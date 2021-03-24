@@ -1,0 +1,33 @@
+#!/bin/bash
+# Taxonomy
+if [[ ! -f $DWC_OCCURRENCES_NDJSON ]]
+then
+  echo "Darwin Core occurrences file \"$DWC_OCCURRENCES_NDJSON\" does not exist"
+  exit 1
+fi
+
+echo "Extracting Darwin Core taxonomy metadata in $DWC_NDJSON"
+
+cat $DWC_OCCURRENCES_NDJSON | nd-map --select scientificName \
+  | nd-count --key individuals \
+  > $DWC_NDJSON/taxa.ndjson
+
+cat $DWC_NDJSON/taxa.ndjson | gbif-species-api --worms --dwc \
+  > $DWC_NDJSON/taxonomy.ndjson
+
+cat $DWC_NDJSON/taxonomy.ndjson \
+  | nd-uniq --select kingdom,phylum,class,order,references,individuals --sort 'b.individuals-a.individuals' \
+  > $DWC_NDJSON/taxonomy-coverage.ndjson
+
+cat $DWC_OCCURRENCES_NDJSON  | nd-uniq --select identificationRemarks \
+  | nd-map 'd.identificationRemarks.split(">").filter(t=>/^[A-Z]/.test(t))' \
+  | ndjson-split | nd-uniq | sort | grep -v Eukaryota \
+  > $DWC_NDJSON/taxonomy-higher.txt
+
+cat $DWC_NDJSON/taxonomy.ndjson | gbif-species-api --worms --dwc --raw \
+  | nd-filter 'd.results.length===0 || /Incertae sedis/.test(JSON.stringify(d.results))' \
+  > $DWC_NDJSON/taxonomy-issues.ndjson
+
+cat $DWC_NDJSON/taxonomy-higher.txt | gbif-species-api --worms --dwc --raw \
+  | nd-filter 'd.results.length===0 || /Incertae sedis/.test(JSON.stringify(d.results))' \
+  > $DWC_NDJSON/taxonomy-higher-issues.ndjson
