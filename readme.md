@@ -26,68 +26,7 @@ This repository contains data production pipelines for building [Darwin Core](ht
 
 ```sh
 gbif-no-darwin-core$ ./bin/ecotaxa-pipeline 1420
-Starting EcoTaxa pipeline [2021-03-23T20:13+00:00]
-Creating Darwin Core occurrences NDJSON from https://ecotaxa.obs-vlfr.fr/prj/1420 TSV in ./dist/ecotaxa-project-1420/dwc-ndjson
-Creating Darwin Core events NDJSON from https://ecotaxa.obs-vlfr.fr/prj/1420 TSV in ./dist/ecotaxa-project-1420/dwc-ndjson
-Extracting Darwin Core event metadata in ./dist/ecotaxa-project-1420/dwc-ndjson
-Extracting Darwin Core taxonomy metadata in ./dist/ecotaxa-project-1420/dwc-ndjson
-Creating Darwin Core archive ./dist/ecotaxa-project-1420/dwc-ndjson/ecotaxa-project-1420-dwc-archive.zip from ./dist/ecotaxa-project-1420/dwc-a
-Creating meta.xml from ./dist/ecotaxa-project-1420/dwc-a
-Core (Event): event.tsv
-Found 14 DwC fields [
-  "eventDate",
-  "samplingProtocol",
-  "fieldNumber",
-  "locality",
-  "sampleSizeValue",
-  "sampleSizeUnit",
-  "decimalLongitude",
-  "decimalLatitude",
-  "maximumDepthInMeters",
-  "minimumDepthInMeters",
-  "eventRemarks",
-  "recordedBy",
-  "datasetID",
-  "eventID"
-]
-Found 1 other fields [ "occurrences" ]
-Core id is eventID index 13
-Extension (Occurrence): occurrence.tsv ./dist/ecotaxa-project-1420/dwc-a
-Found 10 DwC fields [
-  "taxonID",
-  "scientificName",
-  "eventID",
-  "fieldNumber",
-  "occurrenceStatus",
-  "locality",
-  "basisOfRecord",
-  "organismQuantity",
-  "organismQuantityType",
-  "occurrenceID"
-]
-Found 1 other fields [ "canonicalName" ]
-updating: taxonomy.tsv (deflated 73%)
-updating: meta.xml (deflated 77%)
-updating: occurrence.tsv (deflated 79%)
-updating: event.tsv (deflated 78%)
-Finished creating Darwin Core archive ./dist/ecotaxa-project-1420/dwc-ndjson/ecotaxa-project-1420-dwc-archive.zip
-Line counts
-138336 ./_tmp/ecotaxa/1420/ecotaxa_export_1420_20201111_1226.tsv
-       7 ./dist/ecotaxa-project-1420/dwc-ndjson/depths.ndjson
-   58111 ./dist/ecotaxa-project-1420/dwc-ndjson/dwc-occurrences-ecotaxa-project-1420.ndjson
-      70 ./dist/ecotaxa-project-1420/dwc-ndjson/dwc-sampling-events-ecotaxa-project-1420.ndjson
-       6 ./dist/ecotaxa-project-1420/dwc-ndjson/ignored-objects.ndjson
-       1 ./dist/ecotaxa-project-1420/dwc-ndjson/rejected-event-id-not-unique.ndjson
-      10 ./dist/ecotaxa-project-1420/dwc-ndjson/rejected-objects.ndjson
-       3 ./dist/ecotaxa-project-1420/dwc-ndjson/sampling-protocols.ndjson
-      19 ./dist/ecotaxa-project-1420/dwc-ndjson/taxa.ndjson
-      19 ./dist/ecotaxa-project-1420/dwc-ndjson/taxonomy-coverage.ndjson
-       7 ./dist/ecotaxa-project-1420/dwc-ndjson/taxonomy-higher-issues.ndjson
-       0 ./dist/ecotaxa-project-1420/dwc-ndjson/taxonomy-issues.ndjson
-      19 ./dist/ecotaxa-project-1420/dwc-ndjson/taxonomy.ndjson
-       1 ./dist/ecotaxa-project-1420/dwc-ndjson/warn-event-metadata-inconsistent.ndjson
-   58273 total
-Finished EcoTaxa pipeline [2021-03-23T20:15+00:00]
+
 ```
 
 ## Darwin Core pipelines
