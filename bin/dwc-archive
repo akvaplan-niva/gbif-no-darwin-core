@@ -1,0 +1,24 @@
+#!/bin/bash
+echo "Creating Darwin Core archive $DWCA_ZIP from $DWCA"
+mkdir -p $DWCA
+
+cat $DWC_OCCURRENCES_NDJSON \
+  | nd-map 'd.canonicalName = d.scientificName,d' \
+  | nd-count --select canonicalName,taxonID,scientificName,eventID,fieldNumber,occurrenceStatus,locality,basisOfRecord,organismQuantity,organismQuantityType --key organismQuantity \
+  | nd-uuid --key occurrenceID \
+  | json2tsv -n \
+  > $DWCA/occurrence.tsv
+# FIXME Consider using nd-group not to loose content on dateIdentifed etc.
+
+cat $DWC_EVENTS_NDJSON | nd-map '{parentEventID,...dwc} = d, dwc' | json2tsv -n > "$DWCA/event.tsv"
+
+cat $DWC_NDJSON/taxonomy.ndjson | json2tsv -n > $DWCA/taxonomy.tsv
+
+dwc-meta --dir $DWCA --extension Occurrence:occurrence.tsv:3 > $DWCA/meta.xml
+
+# Append authorship into scientific name
+# $ ndjson-join d.canonicalName dwc-occurrences-ecotaxa-project-818.ndjson taxonomy.ndjson \
+#     | nd-map 'd[0].scientificName = d[1].scientificName, d[0].taxonID=d[1].taxonID, {canonicalName, ...o}=d[0],o'
+#/event.tsv
+find "$DWCA" -regextype posix-egrep -regex ".*\.(xml|tsv)$"  -print | zip -j $DWCA_ZIP -@
+echo "Finished creating Darwin Core archive $DWCA_ZIP"

@@ -1,0 +1,12 @@
+#!/bin/bash
+export ECOTAXA_URL="https://ecotaxa.obs-vlfr.fr/prj/$ECOTAXA_PROJECT"
+export DWC_NDJSON="./dist/ecotaxa-project-$ECOTAXA_PROJECT/dwc-ndjson"
+
+export DWCA="./dist/ecotaxa-project-$ECOTAXA_PROJECT/dwc-a"
+export DWCA_ZIP="$DWC_NDJSON/ecotaxa-project-$ECOTAXA_PROJECT-dwc-archive.zip"
+
+export DWC_OCCURRENCES_NDJSON="$DWC_NDJSON/dwc-occurrences-ecotaxa-project-$ECOTAXA_PROJECT.ndjson"
+export DWC_EVENTS_NDJSON="$DWC_NDJSON/dwc-sampling-events-ecotaxa-project-$ECOTAXA_PROJECT.ndjson"
+
+export DWC_OCCURRENCES_TSV="$DWC_NDJSON/`basename -s .ndjson $DWC_OCCURRENCES_NDJSON`.tsv"
+export DWC_EVENTS_TSV="$DWC_NDJSON/`basename -s .ndjson $DWC_EVENTS_NDJSON`.tsv"

@@ -1,0 +1,8 @@
+#!/bin/bash
+export ECOTAXA_TSV_URL="https://sandbox.zenodo.org/record/748731/files/ecotaxa_export_818_20201110_1214.tsv?download=1"
+export ECOTAXA_TSV="./_tmp/ecotaxa/818/ecotaxa_export_818_20201110_1214.tsv"
+export ECOTAXA_PROJECT="818"
+export DATASET_NAME="Darwin Core of EcoTaxa project $ECOTAXA_PROJECT | GBIF-2020_p01"
+export DATASET_ID="16c02403-3bca-59d2-b057-c0c40958827b"
+export DATASET_DOI="https://doi.org/10…"
+export ZENODO_RECORD="748731"
