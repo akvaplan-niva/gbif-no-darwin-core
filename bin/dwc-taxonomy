@@ -9,19 +9,21 @@ fi
 echo "Extracting Darwin Core taxonomy metadata in $DWC_NDJSON"
 
 cat $DWC_OCCURRENCES_NDJSON | nd-map --select scientificName \
-  | nd-count --key individuals \
+  | nd-count \
   > $DWC_NDJSON/taxa.ndjson
 
 cat $DWC_NDJSON/taxa.ndjson | gbif-species-api --worms --dwc \
   > $DWC_NDJSON/taxonomy.ndjson
 
 cat $DWC_NDJSON/taxonomy.ndjson \
-  | nd-uniq --select kingdom,phylum,class,order,references,individuals --sort 'b.individuals-a.individuals' \
+  | nd-uniq --select kingdom,phylum,class,order,references,individuals --sort 'b.count-a.count' \
   > $DWC_NDJSON/taxonomy-coverage.ndjson
 
-cat $DWC_OCCURRENCES_NDJSON  | nd-uniq --select identificationRemarks \
-  | nd-map 'd.identificationRemarks.split(">").filter(t=>/^[A-Z]/.test(t))' \
-  | ndjson-split | nd-uniq | sort | grep -v Eukaryota \
+cat $DWC_OCCURRENCES_NDJSON  \
+  | nd-uniq --select identificationRemarks 'd.identificationRemarks.split(">").filter(t=>/^[A-Z]/.test(t)).map(t => console.log(JSON.stringify(t)))' \
+  | nd-uniq \
+  | nd-filter 'typeof d === "string" && d !== "Eukaryota" && !/\S+\s\S+/.test(d.trim())' \
+  | nd-sort --on 0 \
   > $DWC_NDJSON/taxonomy-higher.txt
 
 cat $DWC_NDJSON/taxonomy.ndjson | gbif-species-api --worms --dwc --raw \
