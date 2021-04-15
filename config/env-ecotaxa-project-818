@@ -1,8 +1,35 @@
 #!/bin/bash
-export ECOTAXA_TSV_URL="https://sandbox.zenodo.org/record/748731/files/ecotaxa_export_818_20201110_1214.tsv?download=1"
+export ECOTAXA_TSV_URL="https://zenodo.org/record/4692116/files/ecotaxa_export_818_20201110_1214.tsv?download=1"
 export ECOTAXA_TSV="./_tmp/ecotaxa/818/ecotaxa_export_818_20201110_1214.tsv"
 export ECOTAXA_PROJECT="818"
-export DATASET_NAME="Darwin Core of EcoTaxa project $ECOTAXA_PROJECT | GBIF-2020_p01"
+export DATASET_NAME="Meroplankton in Isfjorden 2016 to 2017 – Darwin Core  | GBIF-2020_p01"
 export DATASET_ID="16c02403-3bca-59d2-b057-c0c40958827b"
-export DATASET_DOI="https://doi.org/10…"
-export ZENODO_RECORD="748731"
+export ZENODO_RECORD="4692116"
+export DATASET_DOI="https://doi.org/10.5281/zenodo.$ZENODO_RECORD"
+export ECOTAXA_TEMPORARY_MAP='[
+	["temporary", {
+		"scientificName": "Crustacea",
+		"lifeStage": "nauplii",
+		"organismRemarks": "temporary = multiple naupliie/naupliie attached to other objects"
+	}],
+	["temporary>t001", {
+		"scientificName": "Mollusca",
+		"lifeStage": "veliger",
+		"organismRemarks": "t001 = multiple veliger larvae/veliger larvae attached to other objects"
+	}],
+	["temporary>t002", {
+		"scientificName": "Cirripedia",
+		"lifeStage": "nauplii",
+		"organismRemarks": "t002 = multiple cirripedia larvae/cirripedia larvae attached to other objects"
+	}],
+	["temporary>t003", {
+		"scientificName": "Gastropoda",
+		"lifeStage": "veliger",
+		"organismRemarks": "t003 = multiple gastropoda larvae/gastropoda larvae attached to other objects"
+	}],
+	["temporary>t004", {
+		"scientificName": "Animalia",
+		"lifeStage": "egg",
+		"organismRemarks": "t004 = multiple eggs/eggs attached to other objects"
+	}]
+]'
